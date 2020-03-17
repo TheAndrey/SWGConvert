@@ -34,6 +34,17 @@ class SWGHelper {
 	}
 
 	/**
+	 * Генерация структуры модели в виде комментария
+	 * @param string $name
+	 * @param array $data
+	 * @return string
+	 */
+	public static function modelDefinition($name, $data) {
+		$data = array_merge(['definition' => $name], $data);
+		return self::makeTag('Definition', $data);
+	}
+
+	/**
 	 * @param string $name Имя тега после @SWG
 	 * @param array $data
 	 * @param int $level

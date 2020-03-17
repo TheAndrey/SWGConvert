@@ -14,6 +14,10 @@ class SwaggerConverter {
 	 * @var ClassData[]
 	 */
 	private $controllers = [];
+	/**
+	 * @var ClassData[]
+	 */
+	private $models = [];
 
 	public function __construct() {
 		$this->outputDir = ROOT_PATH . '/generated';
@@ -29,7 +33,12 @@ class SwaggerConverter {
 			$this->processPath($path, $data);
 		}
 
-		$this->generateControllers();
+		foreach($swagger['definitions'] as $name => $data) {
+			$this->processModel($name, $data);
+		}
+
+		$this->generateClasses('controller', $this->controllers);
+		$this->generateClasses('model', $this->models);
 	}
 
 	/**
@@ -61,13 +70,24 @@ class SwaggerConverter {
 		$controller->methods[] = $method;
 	}
 
-	private function generateControllers() {
-		$dir = $this->outputDir . '/controllers';
+	/**
+	 * @param string $name
+	 * @param array $data
+	 */
+	private function processModel($name, $data) {
+		$model = new ClassData();
+		$model->name = $name;
+		$model->comment = SWGHelper::modelDefinition($name, $data);
+		$this->models[] = $model;
+	}
+
+	private function generateClasses($dir, $list) {
+		$dir = $this->outputDir . '/' . $dir;
 		if(!file_exists($dir)) mkdir($dir);
 
-		foreach($this->controllers as $controller) {
-			$code = $this->generateClass($controller);
-			file_put_contents($dir . '/' . $controller->name . '.php', $code);
+		foreach($list as $class) {
+			$code = $this->generateClass($class);
+			file_put_contents($dir . '/' . $class->name . '.php', $code);
 		}
 	}
 
@@ -80,4 +100,5 @@ class SwaggerConverter {
 		$code .= $class->getCode() . PHP_EOL;
 		return $code;
 	}
+
 }
