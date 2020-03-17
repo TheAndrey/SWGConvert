@@ -2,6 +2,7 @@
 
 /**
  * Преобразует файл Swagger в PHP аннотации
+ * @author TheAndrey
  */
 class SwaggerConverter {
 
@@ -55,8 +56,7 @@ class SwaggerConverter {
 		// Method
 		$method = new MethodData();
 		$method->name = ($path_arr[1] ?? 'index') . 'Action';
-		$method->comment = SWGHelper::methodDoc($path, $data)
-			. PHP_EOL . print_r($data, true);
+		$method->comment = SWGHelper::methodDoc($path, $data);
 
 		$controller->methods[] = $method;
 	}

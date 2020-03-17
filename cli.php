@@ -12,6 +12,8 @@ spl_autoload_register(function($class) {
 });
 
 $path = $_SERVER['argv'][1];
+if(!is_file($path)) exit('Input does not exists: ' . $path);
+
 $swagger = yaml_parse(file_get_contents($path));
 
 $generator = new SwaggerConverter();
